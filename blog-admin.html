@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>maryu358 ブログ管理画面</title>
+<style>
+  :root {
+    --gold: #c9a96e;
+    --dark: #1a1a1a;
+    --mid: #2d2d2d;
+    --light: #f5f0e8;
+    --accent: #e8c87a;
+    --text: #333;
+    --muted: #888;
+    --border: #ddd;
+    --danger: #c0392b;
+    --success: #27ae60;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    background: #f7f4ef;
+    color: var(--text);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--dark);
+    color: white;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  header h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.05em; }
+  header span { color: var(--gold); font-size: 13px; }
+  .container { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+
+  /* タブ */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+  .tab-btn {
+    padding: 10px 24px;
+    border: none;
+    background: white;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-btn.active { color: var(--dark); border-bottom: 2px solid var(--gold); font-weight: 600; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* フォーム */
+  .card {
+    background: white;
+    border-radius: 0 12px 12px 12px;
+    padding: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .form-group { margin-bottom: 20px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.05em; }
+  input[type="text"], input[type="url"], textarea, select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    background: white;
+  }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--gold); }
+  textarea { resize: vertical; min-height: 180px; line-height: 1.7; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* ボタン */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 22px; border: none; border-radius: 8px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--gold); color: white; }
+  .btn-primary:hover { background: #b8954f; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: #a93226; }
+  .btn-secondary { background: #eee; color: var(--text); }
+  .btn-secondary:hover { background: #ddd; }
+  .btn-export { background: var(--dark); color: white; font-size: 15px; padding: 14px 32px; }
+  .btn-export:hover { background: #333; }
+
+  /* 記事一覧 */
+  .article-list { display: flex; flex-direction: column; gap: 12px; }
+  .article-item {
+    background: white;
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    border: 1px solid var(--border);
+  }
+  .article-item .thumb {
+    width: 64px; height: 64px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #eee;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: #ccc;
+    overflow: hidden;
+  }
+  .article-item .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .article-item .info { flex: 1; min-width: 0; }
+  .article-item .title { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .article-item .meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .article-item .category-badge {
+    font-size: 11px; padding: 2px 10px; border-radius: 20px;
+    background: #f0ebe0; color: var(--gold); font-weight: 600;
+  }
+  .article-actions { display: flex; gap: 8px; }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 15px; }
+
+  /* エクスポートセクション */
+  .export-section {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-top: 24px;
+  }
+  .export-section h2 { font-size: 16px; margin-bottom: 8px; }
+  .export-section p { color: var(--muted); font-size: 13px; margin-bottom: 20px; line-height: 1.6; }
+
+  /* 通知 */
+  .toast {
+    position: fixed; top: 20px; right: 20px;
+    background: var(--dark); color: white;
+    padding: 12px 20px; border-radius: 8px;
+    font-size: 14px; opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  .tag-input-wrap { display: flex; gap: 8px; }
+  .tag-input-wrap input { flex: 1; }
+  .tags-preview { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tag { font-size: 12px; background: #f0ebe0; color: var(--gold); padding: 3px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; }
+  .tag button { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 13px; line-height: 1; padding: 0; }
+
+  .preview-btn { font-size: 12px; color: var(--gold); text-decoration: underline; cursor: pointer; background: none; border: none; margin-left: 8px; }
+  .img-preview { max-width: 200px; max-height: 100px; margin-top: 8px; border-radius: 6px; display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✦ maryu358 ブログ管理</h1>
+  <span>記事の作成・編集・エクスポート</span>
+</header>
+
+<div class="container">
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('write')">✏️ 記事を書く</button>
+    <button class="tab-btn" onclick="switchTab('list')">📋 記事一覧</button>
+    <button class="tab-btn" onclick="switchTab('export')">📤 エクスポート</button>
+  </div>
+
+  <!-- 記事を書く -->
+  <div id="tab-write" class="tab-content active">
+    <div class="card">
+      <div class="form-group">
+        <label>タイトル *</label>
+        <input type="text" id="f-title" placeholder="例：美容鍼で顔のたるみが改善した理由とは？">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>カテゴリ</label>
+          <select id="f-category">
+            <option value="美容鍼">美容鍼</option>
+            <option value="キャビテーション">キャビテーション</option>
+            <option value="よもぎ蒸し">よもぎ蒸し</option>
+            <option value="鍼治療">鍼治療</option>
+            <option value="お知らせ">お知らせ</option>
+            <option value="コラム">コラム</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>投稿日</label>
+          <input type="text" id="f-date" placeholder="2025年6月1日">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>アイキャッチ画像URL（任意）</label>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <div style="flex:1">
+            <input type="url" id="f-image" placeholder="https://..." oninput="previewImg()">
+            <img id="img-preview" class="img-preview" alt="プレビュー">
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;">
+          💡 GitHubのIssues・Imgur・Google フォトなどに画像をアップしてURLを貼ってください
+        </div>
+      </div>
+      <div class="form-group">
+        <label>本文 *</label>
+        <textarea id="f-body" placeholder="記事の本文を書いてください。&#10;&#10;空行で段落が変わります。&#10;&#10;## 見出し&#10;のように書くと見出しになります。"></textarea>
+      </div>
+      <div class="form-group">
+        <label>タグ（SEOキーワード）</label>
+        <div class="tag-input-wrap">
+          <input type="text" id="f-tag-input" placeholder="例：美容鍼" onkeydown="if(event.key==='Enter'){addTag();event.preventDefault();}">
+          <button class="btn btn-secondary" onclick="addTag()">追加</button>
+        </div>
+        <div class="tags-preview" id="tags-preview"></div>
+      </div>
+      <div class="form-group">
+        <label>SEO用 meta description（任意・120文字以内）</label>
+        <input type="text" id="f-desc" placeholder="例：杉戸町の美容鍼サロンmaryu358が美容鍼の効果について解説します。" maxlength="120">
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">
+          <span id="desc-count">0</span>/120文字
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button class="btn btn-primary" onclick="saveArticle()">💾 保存する</button>
+        <button class="btn btn-secondary" onclick="clearForm()">クリア</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 記事一覧 -->
+  <div id="tab-list" class="tab-content">
+    <div class="card">
+      <div id="article-list-container"></div>
+    </div>
+  </div>
+
+  <!-- エクスポート -->
+  <div id="tab-export" class="tab-content">
+    <div class="card">
+      <h2 style="margin-bottom:8px;">📤 blog.html を生成する</h2>
+      <p>保存した記事からブログページ（<strong>blog.html</strong>）を生成します。<br>ダウンロードしたファイルをGitHubの <code>maryu358</code> リポジトリにアップロードしてください。</p>
+      <button class="btn btn-export" onclick="exportBlog()">⬇️ blog.html をダウンロード</button>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <h2 style="margin-bottom:8px;">💾 データのバックアップ</h2>
+      <p style="margin-bottom:16px;">記事データをJSONファイルとして保存します。次回この管理画面を使うときにインポートできます。</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="exportJSON()">📥 JSONをダウンロード</button>
+        <label class="btn btn-secondary" style="cursor:pointer;">
+          📂 JSONを読み込む
+          <input type="file" accept=".json" style="display:none" onchange="importJSON(this)">
+        </label>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// --- State ---
+let articles = JSON.parse(localStorage.getItem('maryu358_articles') || '[]');
+let tags = [];
+let editingId = null;
+
+// --- Init ---
+setTodayDate();
+renderList();
+document.getElementById('f-desc').addEventListener('input', function() {
+  document.getElementById('desc-count').textContent = this.value.length;
+});
+
+function setTodayDate() {
+  const d = new Date();
+  const str = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+  document.getElementById('f-date').value = str;
+}
+
+// --- Tab ---
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  const tabs = ['write','list','export'];
+  const idx = tabs.indexOf(name);
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name === 'list') renderList();
+}
+
+// --- Tags ---
+function addTag() {
+  const input = document.getElementById('f-tag-input');
+  const val = input.value.trim();
+  if(val && !tags.includes(val)) {
+    tags.push(val);
+    renderTags();
+  }
+  input.value = '';
+}
+function removeTag(t) {
+  tags = tags.filter(x => x !== t);
+  renderTags();
+}
+function renderTags() {
+  document.getElementById('tags-preview').innerHTML = tags.map(t =>
+    `<span class="tag">${t}<button onclick="removeTag('${t}')">×</button></span>`
+  ).join('');
+}
+
+// --- Image preview ---
+function previewImg() {
+  const url = document.getElementById('f-image').value;
+  const img = document.getElementById('img-preview');
+  if(url) { img.src = url; img.style.display = 'block'; }
+  else { img.style.display = 'none'; }
+}
+
+// --- Save ---
+function saveArticle() {
+  const title = document.getElementById('f-title').value.trim();
+  const body = document.getElementById('f-body').value.trim();
+  if(!title || !body) { toast('タイトルと本文を入力してください'); return; }
+
+  const article = {
+    id: editingId || Date.now().toString(),
+    title,
+    category: document.getElementById('f-category').value,
+    date: document.getElementById('f-date').value,
+    image: document.getElementById('f-image').value.trim(),
+    body,
+    tags: [...tags],
+    desc: document.getElementById('f-desc').value.trim(),
+    createdAt: editingId ? (articles.find(a=>a.id===editingId)?.createdAt || Date.now()) : Date.now()
+  };
+
+  if(editingId) {
+    articles = articles.map(a => a.id === editingId ? article : a);
+    editingId = null;
+  } else {
+    articles.unshift(article);
+  }
+  localStorage.setItem('maryu358_articles', JSON.stringify(articles));
+  clearForm();
+  toast('✅ 記事を保存しました！');
+}
+
+function clearForm() {
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-body').value = '';
+  document.getElementById('f-image').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('desc-count').textContent = '0';
+  document.getElementById('img-preview').style.display = 'none';
+  tags = [];
+  renderTags();
+  editingId = null;
+  setTodayDate();
+}
+
+function editArticle(id) {
+  const a = articles.find(x => x.id === id);
+  if(!a) return;
+  editingId = id;
+  document.getElementById('f-title').value = a.title;
+  document.getElementById('f-category').value = a.category;
+  document.getElementById('f-date').value = a.date;
+  document.getElementById('f-image').value = a.image || '';
+  document.getElementById('f-body').value = a.body;
+  document.getElementById('f-desc').value = a.desc || '';
+  document.getElementById('desc-count').textContent = (a.desc||'').length;
+  tags = [...(a.tags||[])];
+  renderTags();
+  previewImg();
+  switchTab('write');
+}
+
+function deleteArticle(id) {
+  if(!confirm('この記事を削除しますか？')) return;
+  articles = articles.filter(a => a.id !== id);
+  localStorage.setItem('maryu358_articles', JSON.stringify(articles));
+  renderList();
+  toast('🗑️ 削除しました');
+}
+
+// --- List ---
+function renderList() {
+  const el = document.getElementById('article-list-container');
+  if(!articles.length) {
+    el.innerHTML = '<div class="empty-state">📝 まだ記事がありません<br><br>「記事を書く」タブから作成してください</div>';
+    return;
+  }
+  el.innerHTML = '<div class="article-list">' + articles.map(a => `
+    <div class="article-item">
+      <div class="thumb">
+        ${a.image ? `<img src="${a.image}" onerror="this.style.display='none'">` : '📝'}
+      </div>
+      <div class="info">
+        <div class="title">${a.title}</div>
+        <div class="meta">
+          <span class="category-badge">${a.category}</span>
+          &nbsp;${a.date}
+          ${a.tags?.length ? '&nbsp;#' + a.tags.join(' #') : ''}
+        </div>
+      </div>
+      <div class="article-actions">
+        <button class="btn btn-secondary" onclick="editArticle('${a.id}')">編集</button>
+        <button class="btn btn-danger" onclick="deleteArticle('${a.id}')">削除</button>
+      </div>
+    </div>
+  `).join('') + '</div>';
+}
+
+// --- Export blog.html ---
+function exportBlog() {
+  if(!articles.length) { toast('記事がまだありません'); return; }
+  const html = generateBlogHTML();
+  download('blog.html', html);
+  toast('✅ blog.html をダウンロードしました！');
+}
+
+function generateBlogHTML() {
+  const articleCards = articles.map(a => {
+    const bodyPreview = a.body.replace(/##[^\n]*/g,'').replace(/\n/g,' ').trim().slice(0,100);
+    return `
+    <article class="card" onclick="openModal('${a.id}')">
+      ${a.image ? `<div class="card-img" style="background-image:url('${a.image}')"></div>` : `<div class="card-img no-img">✦</div>`}
+      <div class="card-body">
+        <span class="badge">${a.category}</span>
+        <h2>${a.title}</h2>
+        <p class="excerpt">${bodyPreview}…</p>
+        <div class="meta">${a.date}${a.tags?.length ? '　' + a.tags.map(t=>`<span class="tag">#${t}</span>`).join('') : ''}</div>
+      </div>
+    </article>`;
+  }).join('');
+
+  const modals = articles.map(a => {
+    const bodyHTML = a.body
+      .split('\n\n')
+      .map(p => p.startsWith('## ') ? `<h3>${p.slice(3)}</h3>` : `<p>${p.replace(/\n/g,'<br>')}</p>`)
+      .join('');
+    return `<div class="modal" id="modal-${a.id}">
+      <div class="modal-backdrop" onclick="closeModal()"></div>
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        ${a.image ? `<img src="${a.image}" class="modal-img" alt="${a.title}">` : ''}
+        <div class="modal-body">
+          <span class="badge">${a.category}</span>
+          <h1>${a.title}</h1>
+          <div class="meta">${a.date}${a.tags?.length ? '　' + a.tags.map(t=>`<span class="tag">#${t}</span>`).join('') : ''}</div>
+          <div class="body-text">${bodyHTML}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スタッフブログ | maryu358 杉戸町の美容鍼・よもぎ蒸し・キャビテーション</title>
+<meta name="description" content="maryu358スタッフブログ。美容鍼・よもぎ蒸し・キャビテーションの施術情報やお知らせをお届けします。杉戸町の鍼灸サロン。">
+<style>
+:root {
+  --gold: #c9a96e;
+  --dark: #1a1a1a;
+  --light: #f7f4ef;
+  --text: #333;
+  --muted: #888;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--light);color:var(--text);}
+header{background:var(--dark);color:white;text-align:center;padding:40px 20px 32px;}
+header .site-name{font-size:13px;letter-spacing:0.2em;color:var(--gold);margin-bottom:8px;}
+header h1{font-size:26px;font-weight:700;letter-spacing:0.05em;}
+header p{font-size:13px;color:#aaa;margin-top:8px;}
+nav{background:white;border-bottom:1px solid #eee;text-align:center;padding:12px;}
+nav a{color:var(--dark);text-decoration:none;font-size:13px;margin:0 12px;letter-spacing:0.05em;}
+nav a:hover{color:var(--gold);}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:24px 20px 0;}
+.filter-btn{padding:6px 18px;border:1px solid #ddd;border-radius:20px;background:white;font-size:13px;cursor:pointer;transition:all 0.2s;}
+.filter-btn.active,.filter-btn:hover{background:var(--gold);color:white;border-color:var(--gold);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;max-width:1000px;margin:24px auto;padding:0 20px;}
+.card{background:white;border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.12);}
+.card-img{height:180px;background-size:cover;background-position:center;background-color:#f0ebe0;}
+.card-img.no-img{display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--gold);}
+.card-body{padding:18px;}
+.badge{font-size:11px;padding:3px 12px;border-radius:20px;background:#f0ebe0;color:var(--gold);font-weight:600;}
+.card-body h2{font-size:16px;font-weight:700;margin:10px 0 8px;line-height:1.5;}
+.excerpt{font-size:13px;color:var(--muted);line-height:1.6;}
+.meta{font-size:12px;color:var(--muted);margin-top:12px;}
+.tag{display:inline-block;font-size:11px;color:var(--gold);margin-left:4px;}
+/* モーダル */
+.modal{display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;}
+.modal.open{display:flex;}
+.modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.6);}
+.modal-content{position:relative;background:white;border-radius:16px;max-width:680px;width:90%;max-height:85vh;overflow-y:auto;z-index:1;}
+.modal-close{position:sticky;top:12px;float:right;margin:12px 12px 0 0;background:rgba(0,0,0,0.1);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;color:#333;}
+.modal-img{width:100%;max-height:320px;object-fit:cover;border-radius:16px 16px 0 0;display:block;}
+.modal-body{padding:24px 28px 32px;}
+.modal-body h1{font-size:22px;font-weight:700;margin:12px 0 8px;line-height:1.5;}
+.modal-body .meta{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.body-text h3{font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;border-left:3px solid var(--gold);padding-left:12px;}
+.body-text p{font-size:15px;line-height:1.9;color:#444;margin-bottom:16px;}
+footer{text-align:center;padding:40px 20px;background:var(--dark);color:#aaa;font-size:12px;margin-top:40px;}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="site-name">MARYU358</div>
+  <h1>スタッフブログ</h1>
+  <p>美容鍼・よもぎ蒸し・キャビテーションの情報をお届け</p>
+</header>
+<nav>
+  <a href="index.html">← サイトトップへ</a>
+  <a href="#menu">メニュー</a>
+  <a href="https://lin.ee/UZk0JDN" target="_blank">ご予約</a>
+</nav>
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filter('all',this)">すべて</button>
+  <button class="filter-btn" onclick="filter('美容鍼',this)">美容鍼</button>
+  <button class="filter-btn" onclick="filter('キャビテーション',this)">キャビテーション</button>
+  <button class="filter-btn" onclick="filter('よもぎ蒸し',this)">よもぎ蒸し</button>
+  <button class="filter-btn" onclick="filter('鍼治療',this)">鍼治療</button>
+  <button class="filter-btn" onclick="filter('お知らせ',this)">お知らせ</button>
+  <button class="filter-btn" onclick="filter('コラム',this)">コラム</button>
+</div>
+<div class="grid" id="grid">
+${articleCards}
+</div>
+${modals}
+<footer>
+  <p>© 2025 maryu358 ｜ <a href="index.html">サイトトップ</a> ｜ <a href="https://lin.ee/UZk0JDN">LINE予約</a></p>
+  <p style="margin-top:8px;">埼玉県北葛飾郡杉戸町　東武日光線 杉戸高野台駅 徒歩13分</p>
+</footer>
+<script>
+const allCards = document.querySelectorAll('.card');
+function filter(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  allCards.forEach(c => {
+    const badge = c.querySelector('.badge').textContent;
+    c.style.display = (cat === 'all' || badge === cat) ? '' : 'none';
+  });
+}
+function openModal(id) {
+  document.getElementById('modal-'+id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.querySelectorAll('.modal').forEach(m => m.classList.remove('open'));
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+<\/script>
+</body>
+</html>`;
+}
+
+// --- JSON backup ---
+function exportJSON() {
+  if(!articles.length) { toast('記事がまだありません'); return; }
+  download('maryu358-blog-backup.json', JSON.stringify(articles, null, 2));
+  toast('✅ バックアップを保存しました');
+}
+function importJSON(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(!Array.isArray(data)) throw new Error();
+      articles = data;
+      localStorage.setItem('maryu358_articles', JSON.stringify(articles));
+      renderList();
+      toast(`✅ ${data.length}件の記事を読み込みました`);
+    } catch { toast('❌ 読み込みに失敗しました'); }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+// --- Utils ---
+function download(filename, content) {
+  const a = document.createElement('a');
+  a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(content);
+  if(filename.endsWith('.json')) a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(content);
+  a.download = filename;
+  a.click();
+}
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
