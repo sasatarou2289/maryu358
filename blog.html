@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スタッフブログ | maryu358 杉戸町の美容鍼・よもぎ蒸し・キャビテーション</title>
+<meta name="description" content="maryu358スタッフブログ。美容鍼・よもぎ蒸し・キャビテーションの施術情報やお知らせをお届けします。杉戸町の鍼灸サロン。">
+<style>
+:root {
+  --gold: #c9a96e;
+  --dark: #1a1a1a;
+  --light: #f7f4ef;
+  --text: #333;
+  --muted: #888;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--light);color:var(--text);}
+header{background:var(--dark);color:white;text-align:center;padding:40px 20px 32px;}
+header .site-name{font-size:13px;letter-spacing:0.2em;color:var(--gold);margin-bottom:8px;}
+header h1{font-size:26px;font-weight:700;letter-spacing:0.05em;}
+header p{font-size:13px;color:#aaa;margin-top:8px;}
+nav{background:white;border-bottom:1px solid #eee;text-align:center;padding:12px;}
+nav a{color:var(--dark);text-decoration:none;font-size:13px;margin:0 12px;letter-spacing:0.05em;}
+nav a:hover{color:var(--gold);}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:24px 20px 0;}
+.filter-btn{padding:6px 18px;border:1px solid #ddd;border-radius:20px;background:white;font-size:13px;cursor:pointer;transition:all 0.2s;}
+.filter-btn.active,.filter-btn:hover{background:var(--gold);color:white;border-color:var(--gold);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;max-width:1000px;margin:24px auto;padding:0 20px;}
+.card{background:white;border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.12);}
+.card-img{height:180px;background-size:cover;background-position:center;background-color:#f0ebe0;}
+.card-img.no-img{display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--gold);}
+.card-body{padding:18px;}
+.badge{font-size:11px;padding:3px 12px;border-radius:20px;background:#f0ebe0;color:var(--gold);font-weight:600;}
+.card-body h2{font-size:16px;font-weight:700;margin:10px 0 8px;line-height:1.5;}
+.excerpt{font-size:13px;color:var(--muted);line-height:1.6;}
+.meta{font-size:12px;color:var(--muted);margin-top:12px;}
+.tag{display:inline-block;font-size:11px;color:var(--gold);margin-left:4px;}
+/* モーダル */
+.modal{display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;}
+.modal.open{display:flex;}
+.modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.6);}
+.modal-content{position:relative;background:white;border-radius:16px;max-width:680px;width:90%;max-height:85vh;overflow-y:auto;z-index:1;}
+.modal-close{position:sticky;top:12px;float:right;margin:12px 12px 0 0;background:rgba(0,0,0,0.1);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;color:#333;}
+.modal-img{width:100%;max-height:320px;object-fit:cover;border-radius:16px 16px 0 0;display:block;}
+.modal-body{padding:24px 28px 32px;}
+.modal-body h1{font-size:22px;font-weight:700;margin:12px 0 8px;line-height:1.5;}
+.modal-body .meta{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.body-text h3{font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;border-left:3px solid var(--gold);padding-left:12px;}
+.body-text p{font-size:15px;line-height:1.9;color:#444;margin-bottom:16px;}
+footer{text-align:center;padding:40px 20px;background:var(--dark);color:#aaa;font-size:12px;margin-top:40px;}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="site-name">MARYU358</div>
+  <h1>スタッフブログ</h1>
+  <p>美容鍼・よもぎ蒸し・キャビテーションの情報をお届け</p>
+</header>
+<nav>
+  <a href="index.html">← サイトトップへ</a>
+  <a href="#menu">メニュー</a>
+  <a href="https://lin.ee/UZk0JDN" target="_blank">ご予約</a>
+</nav>
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filter('all',this)">すべて</button>
+  <button class="filter-btn" onclick="filter('美容鍼',this)">美容鍼</button>
+  <button class="filter-btn" onclick="filter('キャビテーション',this)">キャビテーション</button>
+  <button class="filter-btn" onclick="filter('よもぎ蒸し',this)">よもぎ蒸し</button>
+  <button class="filter-btn" onclick="filter('鍼治療',this)">鍼治療</button>
+  <button class="filter-btn" onclick="filter('お知らせ',this)">お知らせ</button>
+  <button class="filter-btn" onclick="filter('コラム',this)">コラム</button>
+</div>
+<div class="grid" id="grid">
+
+    <article class="card" onclick="openModal('1779773724200')">
+      <div class="card-img no-img">✦</div>
+      <div class="card-body">
+        <span class="badge">コラム</span>
+        <h2>疲れが抜けない女性へ｜自律神経のゆらぎと整える時間の大切さ</h2>
+        <p class="excerpt">休んでいるのに疲れが残ることはありませんか？ 寝たはずなのに朝から重い。休日も気が休まらない。予定をこなせてはいるけれど、どこか疲れが抜けない。  そんな状態が続くと、「自分のがんばりが足りないのかな…</p>
+        <div class="meta">2026年5月26日</div>
+      </div>
+    </article>
+</div>
+<div class="modal" id="modal-1779773724200">
+      <div class="modal-backdrop" onclick="closeModal()"></div>
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        
+        <div class="modal-body">
+          <span class="badge">コラム</span>
+          <h1>疲れが抜けない女性へ｜自律神経のゆらぎと整える時間の大切さ</h1>
+          <div class="meta">2026年5月26日</div>
+          <div class="body-text"><p>休んでいるのに疲れが残ることはありませんか？<br>寝たはずなのに朝から重い。休日も気が休まらない。予定をこなせてはいるけれど、どこか疲れが抜けない。</p><p>そんな状態が続くと、「自分のがんばりが足りないのかな」と思ってしまう方もいます。でも、疲れが抜けにくいときは、体がずっと緊張し続けているのかもしれません。</p><p>自律神経は体のリズムに関わっています<br>自律神経は、呼吸、めぐり、体温、眠りなど、私たちが意識しなくても働いている体のリズムに関わっています。</p><p>忙しさ、気温差、ストレス、睡眠不足などが続くと、体が休むモードに入りにくくなることがあります。その結果、疲れやすさ、眠りの浅さ、首肩のこわばりなどを感じる方もいます。</p><p>がんばる女性ほど、休む時間が後回しになりやすい<br>仕事、家事、育児、介護、人間関係。女性の毎日は、目に見えない負担が積み重なりやすいものです。</p><p>「まだ大丈夫」と思っているうちに、呼吸が浅くなったり、肩に力が入ったまま過ごしていたりすることもあります。だからこそ、疲れを感じたときは、体を責めるのではなく、ゆるめる時間を持つことが大切です。</p><p>自律神経ケアで大切にしていること<br>maryu358の自律神経ケアでは、強い刺激で無理に変えようとするのではなく、緊張し続けた体を静かに整えることを大切にしています。</p><p>呼吸や首肩まわりのこわばり、体調に合わせながら、安心して休める時間をつくります。</p><p>こんな方におすすめです<br>疲れが抜けにくい<br>眠りが浅い<br>呼吸が浅いと感じる<br>首肩がこわばりやすい<br>気分や体調が季節でゆらぎやすい<br>まとめ<br>疲れが抜けないときは、もっとがんばるより、体を休ませる時間が必要なこともあります。</p><p>自律神経ケアは、忙しい毎日の中で緊張し続けた体を、静かに整えるためのケアです。気になる方は、LINEまたは予約ページからお気軽にご相談ください。</p><p>https://lin.ee/o91AlPL</p></div>
+        </div>
+      </div>
+    </div>
+<footer>
+  <p>© 2025 maryu358 ｜ <a href="index.html">サイトトップ</a> ｜ <a href="https://lin.ee/UZk0JDN">LINE予約</a></p>
+  <p style="margin-top:8px;">埼玉県北葛飾郡杉戸町　東武日光線 杉戸高野台駅 徒歩13分</p>
+</footer>
+<script>
+const allCards = document.querySelectorAll('.card');
+function filter(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  allCards.forEach(c => {
+    const badge = c.querySelector('.badge').textContent;
+    c.style.display = (cat === 'all' || badge === cat) ? '' : 'none';
+  });
+}
+function openModal(id) {
+  document.getElementById('modal-'+id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.querySelectorAll('.modal').forEach(m => m.classList.remove('open'));
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+</script>
+</body>
+</html>
