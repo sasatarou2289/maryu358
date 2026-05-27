@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スタッフブログ | maryu358 杉戸町の美容鍼・よもぎ蒸し・キャビテーション</title>
+<meta name="description" content="maryu358スタッフブログ。美容鍼・よもぎ蒸し・キャビテーションの施術情報やお知らせをお届けします。杉戸町の鍼灸サロン。">
+<style>
+:root {
+  --gold: #c9a96e;
+  --dark: #1a1a1a;
+  --light: #f7f4ef;
+  --text: #333;
+  --muted: #888;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;background:var(--light);color:var(--text);}
+header{background:var(--dark);color:white;text-align:center;padding:40px 20px 32px;}
+header .site-name{font-size:13px;letter-spacing:0.2em;color:var(--gold);margin-bottom:8px;}
+header h1{font-size:26px;font-weight:700;letter-spacing:0.05em;}
+header p{font-size:13px;color:#aaa;margin-top:8px;}
+nav{background:white;border-bottom:1px solid #eee;text-align:center;padding:12px;}
+nav a{color:var(--dark);text-decoration:none;font-size:13px;margin:0 12px;letter-spacing:0.05em;}
+nav a:hover{color:var(--gold);}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:24px 20px 0;}
+.filter-btn{padding:6px 18px;border:1px solid #ddd;border-radius:20px;background:white;font-size:13px;cursor:pointer;transition:all 0.2s;}
+.filter-btn.active,.filter-btn:hover{background:var(--gold);color:white;border-color:var(--gold);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;max-width:1000px;margin:24px auto;padding:0 20px;}
+.card{background:white;border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.12);}
+.card-img{height:180px;background-size:cover;background-position:center;background-color:#f0ebe0;}
+.card-img.no-img{display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--gold);}
+.card-body{padding:18px;}
+.badge{font-size:11px;padding:3px 12px;border-radius:20px;background:#f0ebe0;color:var(--gold);font-weight:600;}
+.card-body h2{font-size:16px;font-weight:700;margin:10px 0 8px;line-height:1.5;}
+.excerpt{font-size:13px;color:var(--muted);line-height:1.6;}
+.meta{font-size:12px;color:var(--muted);margin-top:12px;}
+.tag{display:inline-block;font-size:11px;color:var(--gold);margin-left:4px;}
+/* モーダル */
+.modal{display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;}
+.modal.open{display:flex;}
+.modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.6);}
+.modal-content{position:relative;background:white;border-radius:16px;max-width:680px;width:90%;max-height:85vh;overflow-y:auto;z-index:1;}
+.modal-close{position:sticky;top:12px;float:right;margin:12px 12px 0 0;background:rgba(0,0,0,0.1);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;color:#333;}
+.modal-img{width:100%;max-height:320px;object-fit:cover;border-radius:16px 16px 0 0;display:block;}
+.modal-body{padding:24px 28px 32px;}
+.modal-body h1{font-size:22px;font-weight:700;margin:12px 0 8px;line-height:1.5;}
+.modal-body .meta{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.body-text h3{font-size:17px;font-weight:700;color:var(--dark);margin:24px 0 10px;border-left:3px solid var(--gold);padding-left:12px;}
+.body-text p{font-size:15px;line-height:1.9;color:#444;margin-bottom:16px;}
+footer{text-align:center;padding:40px 20px;background:var(--dark);color:#aaa;font-size:12px;margin-top:40px;}
+footer a{color:var(--gold);text-decoration:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="site-name">MARYU358</div>
+  <h1>スタッフブログ</h1>
+  <p>美容鍼・よもぎ蒸し・キャビテーションの情報をお届け</p>
+</header>
+<nav>
+  <a href="index.html">← サイトトップへ</a>
+  <a href="#menu">メニュー</a>
+  <a href="https://lin.ee/UZk0JDN" target="_blank">ご予約</a>
+</nav>
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filter('all',this)">すべて</button>
+  <button class="filter-btn" onclick="filter('美容鍼',this)">美容鍼</button>
+  <button class="filter-btn" onclick="filter('キャビテーション',this)">キャビテーション</button>
+  <button class="filter-btn" onclick="filter('よもぎ蒸し',this)">よもぎ蒸し</button>
+  <button class="filter-btn" onclick="filter('鍼治療',this)">鍼治療</button>
+  <button class="filter-btn" onclick="filter('お知らせ',this)">お知らせ</button>
+  <button class="filter-btn" onclick="filter('コラム',this)">コラム</button>
+</div>
+<div class="grid" id="grid">
+
+    <article class="card" onclick="openModal('1779773724200')">
+      <div class="card-img no-img">✦</div>
+      <div class="card-body">
+        <span class="badge">コラム</span>
+        <h2>美容鍼が初めての方へ｜痛みや流れ、受ける前に知っておきたいこと</h2>
+        <p class="excerpt">美容鍼が気になるけれど、不安もある方へ 美容鍼に興味はあるけれど、「痛くないのかな」「初めてでも大丈夫かな」と不安を感じていませんか。  お顔に鍼をする、と聞くと少し緊張する方も多いと思います。特に初…</p>
+        <div class="meta">2026年5月26日</div>
+      </div>
+    </article>
+</div>
+<div class="modal" id="modal-1779773724200">
+      <div class="modal-backdrop" onclick="closeModal()"></div>
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        
+        <div class="modal-body">
+          <span class="badge">コラム</span>
+          <h1>美容鍼が初めての方へ｜痛みや流れ、受ける前に知っておきたいこと</h1>
+          <div class="meta">2026年5月26日</div>
+          <div class="body-text"><p>美容鍼が気になるけれど、不安もある方へ<br>美容鍼に興味はあるけれど、「痛くないのかな」「初めてでも大丈夫かな」と不安を感じていませんか。</p><p>お顔に鍼をする、と聞くと少し緊張する方も多いと思います。特に初めての方は、施術の流れや刺激の強さがわからないだけでも、予約まで一歩踏み出しにくいものです。</p><p>maryu358では、初めての方にも安心して受けていただけるよう、お悩みや体調を伺いながら無理のないペースで進めています。</p><p>美容鍼はどんな方に選ばれている？<br>美容鍼は、お顔の印象やめぐり、表情のこわばりが気になる方に選ばれています。</p><p>たとえば、朝のむくみ、肌のくすみ感、フェイスラインのもたつき、表情の疲れなどが気になる方です。お顔だけを見るのではなく、首肩の緊張や日々の疲れにも目を向けながら、自然な美しさを大切に整えていきます。</p><p>痛みが心配な方へ<br>鍼の感じ方には個人差がありますが、初めての方には刺激が強くなりすぎないよう丁寧に確認しながら進めます。</p><p>不安なことがあれば、施術前でも途中でも遠慮なくお伝えください。「痛みを我慢する」ための時間ではなく、安心して体を預けられる時間であることを大切にしています。</p><p>初回の流れ<br>初回は、まずお悩みや体調、生活リズムについて伺います。</p><p>その後、お顔や首肩まわりの状態を確認し、無理のない内容で施術を行います。施術後は、日常で気をつけたいことや、次回の目安についても必要に応じてお伝えします。</p><p>初めての方に大切にしてほしいこと<br>美容鍼は、強い変化を求めて無理をするものではありません。</p><p>忙しい毎日の中でこわばりやすい表情や体を、少しずつゆるめていくようなケアです。初めての方ほど、緊張しすぎず、今の状態をそのまま相談していただければ大丈夫です。</p><p>まとめ<br>美容鍼が初めての方は、不安があって自然です。</p><p>maryu358では、痛みや刺激に配慮しながら、お顔の印象だけでなく、めぐりや緊張にもやさしく向き合います。気になる方は、LINEまたは予約ページからお気軽にご相談ください。</p><p></p><p>https://lin.ee/o91AlPL</p></div>
+        </div>
+      </div>
+    </div>
+<footer>
+  <p>© 2025 maryu358 ｜ <a href="index.html">サイトトップ</a> ｜ <a href="https://lin.ee/UZk0JDN">LINE予約</a></p>
+  <p style="margin-top:8px;">埼玉県北葛飾郡杉戸町　東武日光線 杉戸高野台駅 徒歩13分</p>
+</footer>
+<script>
+const allCards = document.querySelectorAll('.card');
+function filter(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  allCards.forEach(c => {
+    const badge = c.querySelector('.badge').textContent;
+    c.style.display = (cat === 'all' || badge === cat) ? '' : 'none';
+  });
+}
+function openModal(id) {
+  document.getElementById('modal-'+id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.querySelectorAll('.modal').forEach(m => m.classList.remove('open'));
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+</script>
+</body>
+</html>
